@@ -13,6 +13,7 @@ type Builder struct {
 	output      Writer
 	transform   func(inputObject interface{}) (interface{}, error)
 	filter      func(object interface{}) (bool, error)
+	inputLimit  int
 	outputLimit int
 }
 
@@ -23,6 +24,7 @@ func NewBuilder() *Builder {
 		output:      nil,
 		transform:   nil,
 		filter:      nil,
+		inputLimit:  -1,
 		outputLimit: -1,
 	}
 }
@@ -34,6 +36,7 @@ func (b *Builder) Input(in Iterator) *Builder {
 		output:      b.output,
 		transform:   b.transform,
 		filter:      b.filter,
+		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
 	}
 }
@@ -45,6 +48,7 @@ func (b *Builder) Output(w Writer) *Builder {
 		output:      w,
 		transform:   b.transform,
 		filter:      b.filter,
+		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
 	}
 }
@@ -56,6 +60,7 @@ func (b *Builder) Transform(t func(inputObject interface{}) (interface{}, error)
 		output:      b.output,
 		transform:   t,
 		filter:      b.filter,
+		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
 	}
 }
@@ -67,6 +72,19 @@ func (b *Builder) Filter(f func(object interface{}) (bool, error)) *Builder {
 		output:      b.output,
 		transform:   b.transform,
 		filter:      f,
+		inputLimit:  b.inputLimit,
+		outputLimit: b.outputLimit,
+	}
+}
+
+// InputLimit sets the inputLimit for the pipeline.
+func (b *Builder) InputLimit(inputLimit int) *Builder {
+	return &Builder{
+		input:       b.input,
+		output:      b.output,
+		transform:   b.transform,
+		filter:      b.filter,
+		inputLimit:  inputLimit,
 		outputLimit: b.outputLimit,
 	}
 }
@@ -78,6 +96,7 @@ func (b *Builder) OutputLimit(outputLimit int) *Builder {
 		output:      b.output,
 		transform:   b.transform,
 		filter:      b.filter,
+		inputLimit:  b.inputLimit,
 		outputLimit: outputLimit,
 	}
 }
@@ -85,7 +104,7 @@ func (b *Builder) OutputLimit(outputLimit int) *Builder {
 // Run runs the pipeline.
 func (b *Builder) Run() error {
 	if b.input != nil && b.output != nil {
-		return IteratorToWriter(b.input, b.output, b.transform, b.filter, b.outputLimit)
+		return IteratorToWriter(b.input, b.output, b.transform, b.filter, b.inputLimit, b.outputLimit)
 	}
 	return nil
 }

@@ -15,7 +15,28 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBuilder(t *testing.T) {
+func TestBuilderInputLimit(t *testing.T) {
+
+	inputValues := []interface{}{"a", "b", 1, 2, 3, true, false}
+
+	it, err := NewSliceIterator(inputValues)
+	assert.Nil(t, err)
+	assert.NotNil(t, it)
+
+	w := NewSliceWriter()
+	assert.NotNil(t, w)
+
+	b := NewBuilder().Input(it).Output(w).InputLimit(2)
+	assert.NotNil(t, b)
+
+	err = b.Run()
+	assert.Nil(t, err)
+	outputValues := w.Values()
+	assert.Equal(t, inputValues[:2], outputValues)
+
+}
+
+func TestBuilderOutputLimit(t *testing.T) {
 
 	inputValues := []interface{}{"a", "b", 1, 2, 3, true, false}
 

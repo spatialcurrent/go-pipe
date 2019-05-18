@@ -15,9 +15,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interface{}) (interface{}, error), filter func(inputObject interface{}) (bool, error), outputLimit int) error {
-	count := 0
+func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interface{}) (interface{}, error), filter func(inputObject interface{}) (bool, error), inputLimit int, outputLimit int) error {
+	if inputLimit == 0 {
+		return nil
+	}
+	if outputLimit == 0 {
+		return nil
+	}
+	inputCount := 0
+	outputCount := 0
 	for {
+		inputCount++
 		inputObject, nextError := it.Next()
 		if nextError != nil {
 			if nextError == io.EOF {
@@ -39,7 +47,7 @@ func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interfac
 					continue
 				}
 			}
-			count++
+			outputCount++
 			writeError := w.WriteObject(outputObject)
 			if writeError != nil {
 				return errors.Wrap(writeError, "error writing object to output")
@@ -54,13 +62,16 @@ func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interfac
 					continue
 				}
 			}
-			count++
+			outputCount++
 			writeError := w.WriteObject(inputObject)
 			if writeError != nil {
 				return errors.Wrap(writeError, "error writing object to output")
 			}
 		}
-		if outputLimit >= 0 && count == outputLimit {
+		if inputLimit > 0 && inputCount == inputLimit {
+			break
+		}
+		if outputLimit > 0 && outputCount == outputLimit {
 			break
 		}
 	}
