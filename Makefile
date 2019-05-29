@@ -11,6 +11,9 @@ deps:
 fmt:
 	go fmt $$(go list ./... )
 
+imports:
+	goimports -w $$(find . -iname '*.go')
+
 vet:
 	go vet $$(go list ./...)
 

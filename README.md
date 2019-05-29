@@ -39,6 +39,11 @@ import (
 
 See [pipe](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe) in GoDoc for information on how to use Go API.  See the tests for ways to use this library.
 
+
+# Examples
+
+See [examples](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe/#pkg-examples) in GoDoc.
+
 # Testing
 
 Run test using `make test` or (`bash scripts/test.sh`), which runs unit tests, `go vet`, `go vet with shadow`, [errcheck](https://github.com/kisielk/errcheck), [ineffassign](https://github.com/gordonklaus/ineffassign), [staticcheck](https://staticcheck.io/), and [misspell](https://github.com/client9/misspell).

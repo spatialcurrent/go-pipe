@@ -54,6 +54,11 @@ func (sw *SliceWriter) Flush() error {
 	return nil
 }
 
+// Resets the writer and clears all existing values.
+func (sw *SliceWriter) Reset() {
+	sw.values = reflect.MakeSlice(reflect.TypeOf(sw.values), 0, 0)
+}
+
 func (sw *SliceWriter) Values() interface{} {
 	return sw.values.Interface()
 }

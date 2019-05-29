@@ -11,9 +11,22 @@ import (
 	"io"
 )
 
-// Iterator contains the Next function that returns an object until it returns an io.EOF error.
+//
+// MultiIterator returns an Iterator that's the logical concatenation of the provided input iterators.
+// They're read sequentially. Once all iterators have returned EOF, Next will return EOF.
+// If any of the iterators return a non-nil, non-EOF error, Next will return that error.
+// This approach is similiar to the io.MultiReader.
+//
+//	- https://godoc.org/io#MultiReader
 type MultiIterator struct {
 	iterators []Iterator
+}
+
+// NewMultiIterator returns a new MultiIterator that serialy iterators through the given iterators.
+func NewMultiIterator(iterators ...Iterator) *MultiIterator {
+	return &MultiIterator{
+		iterators: iterators,
+	}
 }
 
 func (mi *MultiIterator) Push(it ...Iterator) {
@@ -36,6 +49,7 @@ func (mi *MultiIterator) Next() (interface{}, error) {
 					return obj, io.EOF
 				} else {
 					mi.iterators = mi.iterators[1:]
+					continue
 				}
 			}
 		}
