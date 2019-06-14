@@ -9,38 +9,23 @@ jobs:
     executor: base
     steps:
       - checkout
-      - run: make deps
+      - run: make deps_go
       - run: sudo chown -R circleci /go/src
       - save_cache:
           key: v1-go-src-{{ .Branch }}-{{ .Revision }}
           paths:
             - /go/src
-  test:
+  test_go:
     executor: base
     steps:
       - run: sudo chown -R circleci /go/src
       - restore_cache:
           keys:
             - v1-go-src-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Get shadow
-          command: go get golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
-      - run:
-          name: Install shadow
-          command: go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
-      - run:
-          name: Download and install errcheck
-          command: go get -u github.com/kisielk/errcheck
-      - run:
-          name: Download and install misspell
-          command: go get -u github.com/client9/misspell/cmd/misspell
-      - run:
-          name: Download and install ineffassign
-          command: go get -u github.com/gordonklaus/ineffassign
-      - run:
-          name: Download and install staticheck
-          command: go get -u honnef.co/go/tools/cmd/staticcheck
-      - run: make test
+      - run: make deps_go_test
+      - run: make test_go
+      - run: make imports
+      - run: git diff --exit-code
   validate:
     executor: base
     steps:
@@ -64,7 +49,7 @@ workflows:
   main:
     jobs:
       - pre_deps_golang
-      - test:
+      - test_go:
           requires:
             - pre_deps_golang
       - validate:
