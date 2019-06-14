@@ -39,6 +39,6 @@ imports: ## Update imports in Go source code
 vet: ## Vet Go source code
 	go vet $$(go list ./... )
 
-.PHONY: test
-test: ## Run Go tests
+.PHONY: test_go
+test_go: ## Run Go tests
 	bash scripts/test.sh
