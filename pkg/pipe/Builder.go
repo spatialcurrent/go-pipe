@@ -12,6 +12,7 @@ type Builder struct {
 	input       Iterator
 	output      Writer
 	transform   func(inputObject interface{}) (interface{}, error)
+	error       func(err error) error
 	filter      func(object interface{}) (bool, error)
 	inputLimit  int
 	outputLimit int
@@ -35,6 +36,7 @@ func (b *Builder) Input(in Iterator) *Builder {
 		input:       in,
 		output:      b.output,
 		transform:   b.transform,
+		error:       b.error,
 		filter:      b.filter,
 		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
@@ -47,6 +49,7 @@ func (b *Builder) Output(w Writer) *Builder {
 		input:       b.input,
 		output:      w,
 		transform:   b.transform,
+		error:       b.error,
 		filter:      b.filter,
 		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
@@ -59,6 +62,20 @@ func (b *Builder) Transform(t func(inputObject interface{}) (interface{}, error)
 		input:       b.input,
 		output:      b.output,
 		transform:   t,
+		error:       b.error,
+		filter:      b.filter,
+		inputLimit:  b.inputLimit,
+		outputLimit: b.outputLimit,
+	}
+}
+
+// Transform sets the transform for the pipeline.
+func (b *Builder) Error(e func(err error) error) *Builder {
+	return &Builder{
+		input:       b.input,
+		output:      b.output,
+		transform:   b.transform,
+		error:       e,
 		filter:      b.filter,
 		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
@@ -71,6 +88,7 @@ func (b *Builder) Filter(f func(object interface{}) (bool, error)) *Builder {
 		input:       b.input,
 		output:      b.output,
 		transform:   b.transform,
+		error:       b.error,
 		filter:      f,
 		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
@@ -83,6 +101,7 @@ func (b *Builder) InputLimit(inputLimit int) *Builder {
 		input:       b.input,
 		output:      b.output,
 		transform:   b.transform,
+		error:       b.error,
 		filter:      b.filter,
 		inputLimit:  inputLimit,
 		outputLimit: b.outputLimit,
@@ -95,6 +114,7 @@ func (b *Builder) OutputLimit(outputLimit int) *Builder {
 		input:       b.input,
 		output:      b.output,
 		transform:   b.transform,
+		error:       b.error,
 		filter:      b.filter,
 		inputLimit:  b.inputLimit,
 		outputLimit: outputLimit,
@@ -104,7 +124,7 @@ func (b *Builder) OutputLimit(outputLimit int) *Builder {
 // Run runs the pipeline.
 func (b *Builder) Run() error {
 	if b.input != nil && b.output != nil {
-		return IteratorToWriter(b.input, b.output, b.transform, b.filter, b.inputLimit, b.outputLimit)
+		return IteratorToWriter(b.input, b.output, b.transform, b.error, b.filter, b.inputLimit, b.outputLimit)
 	}
 	return nil
 }

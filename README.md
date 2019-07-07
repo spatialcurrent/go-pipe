@@ -8,6 +8,8 @@
 
 **Iterator**
 
+Iterator will return io.EOF once it has read all the objects from the input.
+
 ```go
 type Iterator interface {
 	Next() (interface{}, error)
@@ -15,6 +17,8 @@ type Iterator interface {
 ```
 
 **Writer**
+
+Writer can write objects to a channel, function, slice, or map (map[interface{}]struct{}{}).
 
 ```go
 type Writer interface {
@@ -37,12 +41,11 @@ import (
 )
 ```
 
-See [pipe](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe) in GoDoc for information on how to use Go API.  See the tests for ways to use this library.
-
+See [pipe](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe) in GoDoc for information on how to use Go API.
 
 # Examples
 
-See [examples](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe/#pkg-examples) in GoDoc.
+See the many [examples](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe/#pkg-examples) in GoDoc or the tests.
 
 # Testing
 

@@ -15,7 +15,15 @@ import (
 	"github.com/pkg/errors"
 )
 
-func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interface{}) (interface{}, error), filter func(inputObject interface{}) (bool, error), inputLimit int, outputLimit int) error {
+// IteratorToWriter reads objects from the provided iterator and writes them to the provided writer.
+// If a transform function is given, then transforms the input objects before writing them.
+// If an errorHandler is given, then propogates errors returned by the transformed function through the errorHandler.
+// If the errorHandler returns a non-nil error, then processing will halt.
+// If a filter is given, the input object, after transformation if applicable, is filtered.
+// If the filter returns true and no error, then the object is passed to the writer.
+// If the inputLimit >= 0, then reads the given number of objects from the input.
+// If the outputLimit >= 0, then writes the given number of objecst to the writer.
+func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interface{}) (interface{}, error), errorHandler func(err error) error, filter func(inputObject interface{}) (bool, error), inputLimit int, outputLimit int) error {
 	if inputLimit == 0 {
 		return nil
 	}
@@ -36,7 +44,12 @@ func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interfac
 		if transform != nil {
 			outputObject, transformError := transform(inputObject)
 			if transformError != nil {
-				return errors.Wrap(transformError, "error transforming object")
+				if errorHandler != nil {
+					transformError = errorHandler(transformError)
+				}
+				if transformError != nil {
+					return transformError
+				}
 			}
 			if filter != nil {
 				ok, filterError := filter(outputObject)
