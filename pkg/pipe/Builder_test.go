@@ -10,9 +10,7 @@ package pipe
 import (
 	"fmt"
 	"testing"
-)
 
-import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )

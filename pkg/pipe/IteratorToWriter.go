@@ -9,9 +9,7 @@ package pipe
 
 import (
 	"io"
-)
 
-import (
 	"github.com/pkg/errors"
 )
 

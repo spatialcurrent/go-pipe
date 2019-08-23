@@ -12,9 +12,7 @@ import (
 	"io"
 	"sort"
 	"testing"
-)
 
-import (
 	"github.com/stretchr/testify/assert"
 )
 
