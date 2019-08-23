@@ -33,12 +33,12 @@ fmt:  ## Format Go source code
 
 .PHONY: imports
 imports: ## Update imports in Go source code
-	goimports -w $$(find . -iname '*.go')
+	goimports -w -local github.com/spatialcurrent/go-pipe,github.com/spatialcurrent/ $$(find . -iname '*.go')
 
 .PHONY: vet
 vet: ## Vet Go source code
 	go vet $$(go list ./... )
 
 .PHONY: test_go
-test_go: ## Run Go tests
+test: ## Run Go tests
 	bash scripts/test.sh

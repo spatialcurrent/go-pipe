@@ -12,7 +12,7 @@ import (
 	"sync"
 )
 
-// Writer contains the WriteObject and Flush functions for writing objects.
+// SliceWriter contains the WriteObject and Flush functions for writing objects to an underlying slice.
 type SliceWriter struct {
 	values reflect.Value
 	mutex  *sync.RWMutex
@@ -54,7 +54,7 @@ func (sw *SliceWriter) Flush() error {
 	return nil
 }
 
-// Resets the writer and clears all existing values.
+// Reset creates a new underlying slice from the type of the original slice.
 func (sw *SliceWriter) Reset() {
 	sw.values = reflect.MakeSlice(reflect.TypeOf(sw.values), 0, 0)
 }

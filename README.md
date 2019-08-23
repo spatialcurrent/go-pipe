@@ -8,6 +8,8 @@
 
 **Iterator**
 
+The Next method will return io.EOF once it has read all the objects from the input.
+
 ```go
 type Iterator interface {
 	Next() (interface{}, error)
@@ -16,6 +18,8 @@ type Iterator interface {
 
 **Writer**
 
+Writer can write objects to any backend defined by the concrete implementation.
+
 ```go
 type Writer interface {
 	WriteObject(object interface{}) error
@@ -23,11 +27,17 @@ type Writer interface {
 }
 ```
 
-**go-pipe** includes concrete structs for writing to channels, slice, and functions.  It is also used in [railgun](https://github.com/spatialcurrent/railgun) project along with [go-simple-serializer](https://github.com/spatialcurrent/go-simple-serializer) to process objects from files.
+**go-pipe** includes concrete structs for writing to channels, slice, functions, and maps.  It is also used in [railgun](https://github.com/spatialcurrent/railgun) project along with [go-simple-serializer](https://github.com/spatialcurrent/go-simple-serializer) to process objects from files.
 
 # Usage
 
 **Go**
+
+Install the package with:
+
+```shell
+go get -d github.com/spatialcurrent/go-pipe/...
+```
 
 You can import **go-pipe** as a library with:
 
@@ -37,12 +47,11 @@ import (
 )
 ```
 
-See [pipe](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe) in GoDoc for information on how to use Go API.  See the tests for ways to use this library.
-
+See [pipe](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe) in GoDoc for information on how to use Go API.
 
 # Examples
 
-See [examples](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe/#pkg-examples) in GoDoc.
+See the many [examples](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe/#pkg-examples) in GoDoc or the tests.
 
 # Testing
 

@@ -10,9 +10,7 @@ package pipe
 import (
 	"io"
 	"testing"
-)
 
-import (
 	"github.com/stretchr/testify/assert"
 )
 

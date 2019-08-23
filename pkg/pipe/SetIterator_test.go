@@ -8,52 +8,47 @@
 package pipe
 
 import (
+	"fmt"
 	"io"
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSliceIterator(t *testing.T) {
+func TestSetIterator(t *testing.T) {
 
-	it, err := NewSliceIterator([]interface{}{"a", "b", 1, 2, 3, true, false})
+	input := map[string]struct{}{
+		"a": struct{}{},
+		"b": struct{}{},
+		"c": struct{}{},
+	}
+	expected := []string{"a", "b", "c"}
+	output := []string{}
+
+	it, err := NewSetIterator(input)
 	assert.Nil(t, err)
 
 	obj, err := it.Next()
 	assert.Nil(t, err)
-	assert.Equal(t, "a", obj)
+	output = append(output, fmt.Sprint(obj))
 
 	obj, err = it.Next()
 	assert.Nil(t, err)
-	assert.Equal(t, "b", obj)
+	output = append(output, fmt.Sprint(obj))
 
 	obj, err = it.Next()
 	assert.Nil(t, err)
-	assert.Equal(t, 1, obj)
-
-	obj, err = it.Next()
-	assert.Nil(t, err)
-	assert.Equal(t, 2, obj)
-
-	obj, err = it.Next()
-	assert.Nil(t, err)
-	assert.Equal(t, 3, obj)
-
-	obj, err = it.Next()
-	assert.Nil(t, err)
-	assert.Equal(t, true, obj)
-
-	obj, err = it.Next()
-	assert.Nil(t, err)
-	assert.Equal(t, false, obj)
+	output = append(output, fmt.Sprint(obj))
 
 	// Should return io.EOF to indicate the reader is finished
-	obj, err = it.Next()
+	_, err = it.Next()
 	assert.Equal(t, io.EOF, err)
-	assert.Nil(t, obj)
 
 	// Should still return io.EOF to indicate the reader is finished
-	obj, err = it.Next()
+	_, err = it.Next()
 	assert.Equal(t, io.EOF, err)
-	assert.Nil(t, obj)
+
+	sort.Strings(output)
+	assert.Equal(t, expected, output)
 }

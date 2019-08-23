@@ -13,11 +13,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestChannelWriter(t *testing.T) {
+func TestSetWriter(t *testing.T) {
 
-	c := make(chan interface{}, 1000)
+	expectedValues := map[interface{}]struct{}{
+		"a": struct{}{},
+		"b": struct{}{},
+		"c": struct{}{},
+	}
 
-	w := NewChannelWriter(c)
+	w := NewSetWriter()
 
 	err := w.WriteObject("a")
 	assert.Nil(t, err)
@@ -28,20 +32,10 @@ func TestChannelWriter(t *testing.T) {
 	err = w.WriteObject("c")
 	assert.Nil(t, err)
 
-	err = w.WriteObject(1)
+	err = w.WriteObject("a")
 	assert.Nil(t, err)
 
-	err = w.WriteObject(2)
-	assert.Nil(t, err)
+	values := w.Values() // get values written as slice of type []interface{}
 
-	err = w.WriteObject(3)
-	assert.Nil(t, err)
-
-	close(c)
-
-	values := make([]interface{}, 0)
-	for v := range c {
-		values = append(values, v)
-	}
-	assert.Equal(t, []interface{}{"a", "b", "c", 1, 2, 3}, values)
+	assert.Equal(t, expectedValues, values)
 }

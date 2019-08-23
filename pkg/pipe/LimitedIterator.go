@@ -13,7 +13,7 @@ import (
 
 //
 // LimitedIterator returns an iterator that reads up to a given number of objects from the underlying reader.
-// Once the maximum number of objects has been read or the underlying iterator has returned EOF, Next will return EOF.
+// Once the maximum number of objects has been read or the underlying iterator has returned io.EOF, Next will return io.EOF.
 // If the underlying iterator returns a non-nil, non-EOF error, Next will return that error.
 // This approach is similiar to the io.LimitedReader.
 //
