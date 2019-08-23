@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMapWriter(t *testing.T) {
+func TestSetWriter(t *testing.T) {
 
 	expectedValues := map[interface{}]struct{}{
 		"a": struct{}{},
@@ -23,7 +23,7 @@ func TestMapWriter(t *testing.T) {
 		"c": struct{}{},
 	}
 
-	w := NewMapWriter()
+	w := NewSetWriter()
 
 	err := w.WriteObject("a")
 	assert.Nil(t, err)

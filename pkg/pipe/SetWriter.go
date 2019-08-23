@@ -12,27 +12,27 @@ import (
 	"sync"
 )
 
-// MapWriter contains the WriteObject and Flush functions for writing objects as keys to a map
-type MapWriter struct {
+// SetWriter contains the WriteObject and Flush functions for writing objects as keys to a set.
+type SetWriter struct {
 	values reflect.Value
 	mutex  *sync.RWMutex
 }
 
-func NewMapWriter() *MapWriter {
-	return &MapWriter{
+func NewSetWriter() *SetWriter {
+	return &SetWriter{
 		values: reflect.ValueOf(map[interface{}]struct{}{}),
 		mutex:  &sync.RWMutex{},
 	}
 }
 
-func NewMapWriterWithValues(initialValues interface{}) *MapWriter {
-	return &MapWriter{
+func NewSetWriterWithValues(initialValues interface{}) *SetWriter {
+	return &SetWriter{
 		values: reflect.ValueOf(initialValues),
 		mutex:  &sync.RWMutex{},
 	}
 }
 
-func (mw *MapWriter) WriteObject(object interface{}) error {
+func (mw *SetWriter) WriteObject(object interface{}) error {
 	mw.mutex.Lock()
 	if object == nil {
 		mw.values.SetMapIndex(reflect.Zero(mw.values.Type().Key()), reflect.Zero(mw.values.Type().Elem()))
@@ -43,16 +43,16 @@ func (mw *MapWriter) WriteObject(object interface{}) error {
 	return nil
 }
 
-func (mw *MapWriter) Flush() error {
+func (mw *SetWriter) Flush() error {
 	return nil
 }
 
 // Resets the writer and clears all existing values.
-func (mw *MapWriter) Reset() {
+func (mw *SetWriter) Reset() {
 	mw.values = reflect.MakeSlice(reflect.TypeOf(mw.values), 0, 0)
 }
 
-func (mw *MapWriter) SliceInterface() []interface{} {
+func (mw *SetWriter) SliceInterface() []interface{} {
 	keys := mw.values.MapKeys()
 	values := make([]interface{}, 0, len(keys))
 	for _, key := range keys {
@@ -61,7 +61,7 @@ func (mw *MapWriter) SliceInterface() []interface{} {
 	return values
 }
 
-func (mw *MapWriter) SliceType() interface{} {
+func (mw *SetWriter) SliceType() interface{} {
 	keys := mw.values.MapKeys()
 	values := reflect.MakeSlice(reflect.SliceOf(mw.values.Type().Key()), 0, len(keys))
 	for _, key := range keys {
@@ -70,12 +70,12 @@ func (mw *MapWriter) SliceType() interface{} {
 	return values.Interface()
 }
 
-func (mw *MapWriter) Values() interface{} {
+func (mw *SetWriter) Values() interface{} {
 	return mw.values.Interface()
 }
 
-func (mw *MapWriter) Iterator() *MapIterator {
-	return &MapIterator{
+func (mw *SetWriter) Iterator() *SetIterator {
+	return &SetIterator{
 		it:   mw.values.MapRange(),
 		done: false,
 	}

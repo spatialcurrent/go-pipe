@@ -56,7 +56,7 @@ func ExampleBuilder_sliceToSet() {
 		panic(err)
 	}
 
-	w := NewMapWriter()
+	w := NewSetWriter()
 
 	err = NewBuilder().Input(it).Output(w).Run()
 	if err != nil {

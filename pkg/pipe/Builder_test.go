@@ -137,7 +137,7 @@ func TestSliceToSet(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, it)
 
-	w := NewMapWriter()
+	w := NewSetWriter()
 	assert.NotNil(t, w)
 
 	b := NewBuilder().Input(it).Output(w)

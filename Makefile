@@ -40,5 +40,5 @@ vet: ## Vet Go source code
 	go vet $$(go list ./... )
 
 .PHONY: test_go
-test_go: ## Run Go tests
+test: ## Run Go tests
 	bash scripts/test.sh

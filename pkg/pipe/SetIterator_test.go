@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMapIterator(t *testing.T) {
+func TestSetIterator(t *testing.T) {
 
 	input := map[string]struct{}{
 		"a": struct{}{},
@@ -28,7 +28,7 @@ func TestMapIterator(t *testing.T) {
 	expected := []string{"a", "b", "c"}
 	output := []string{}
 
-	it, err := NewMapIterator(input)
+	it, err := NewSetIterator(input)
 	assert.Nil(t, err)
 
 	obj, err := it.Next()

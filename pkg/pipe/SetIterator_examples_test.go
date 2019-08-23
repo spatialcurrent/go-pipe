@@ -13,7 +13,7 @@ import (
 )
 
 // This examples shows how to use a map iterator to iterate through the keys of a map.
-func ExampleMapIterator() {
+func ExampleSetIterator() {
 
 	input := map[string]struct{}{
 		"a": struct{}{},
@@ -21,7 +21,7 @@ func ExampleMapIterator() {
 		"c": struct{}{},
 	}
 
-	it, err := NewMapIterator(input)
+	it, err := NewSetIterator(input)
 	if err != nil {
 		panic(err)
 	}

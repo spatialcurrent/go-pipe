@@ -8,7 +8,7 @@
 
 **Iterator**
 
-Iterator will return io.EOF once it has read all the objects from the input.
+The Next method will return io.EOF once it has read all the objects from the input.
 
 ```go
 type Iterator interface {
@@ -18,7 +18,7 @@ type Iterator interface {
 
 **Writer**
 
-Writer can write objects to a channel, function, slice, or map (map[interface{}]struct{}{}).
+Writer can write objects to any backend defined by the concrete implementation.
 
 ```go
 type Writer interface {
@@ -27,11 +27,17 @@ type Writer interface {
 }
 ```
 
-**go-pipe** includes concrete structs for writing to channels, slice, and functions.  It is also used in [railgun](https://github.com/spatialcurrent/railgun) project along with [go-simple-serializer](https://github.com/spatialcurrent/go-simple-serializer) to process objects from files.
+**go-pipe** includes concrete structs for writing to channels, slice, functions, and maps.  It is also used in [railgun](https://github.com/spatialcurrent/railgun) project along with [go-simple-serializer](https://github.com/spatialcurrent/go-simple-serializer) to process objects from files.
 
 # Usage
 
 **Go**
+
+Install the package with:
+
+```shell
+go get -d github.com/spatialcurrent/go-pipe/...
+```
 
 You can import **go-pipe** as a library with:
 

@@ -12,22 +12,22 @@ import (
 	"reflect"
 )
 
-// MapIterator iterates over the keys in a map.
-type MapIterator struct {
+// SetIterator iterates over the keys in a map.
+type SetIterator struct {
 	it   *reflect.MapIter
 	done bool
 }
 
-// NewMapIterator returns a new MapIterator.
-func NewMapIterator(values interface{}) (*MapIterator, error) {
+// NewSetIterator returns a new SetIterator.
+func NewSetIterator(values interface{}) (*SetIterator, error) {
 	v := reflect.ValueOf(values)
 	if k := v.Type().Kind(); k != reflect.Map {
 		return nil, &ErrInvalidKind{Value: v.Type(), Expected: []reflect.Kind{reflect.Map}}
 	}
-	return &MapIterator{it: v.MapRange()}, nil
+	return &SetIterator{it: v.MapRange()}, nil
 }
 
-func (mi *MapIterator) Next() (interface{}, error) {
+func (mi *SetIterator) Next() (interface{}, error) {
 	if mi.done {
 		return nil, io.EOF
 	}

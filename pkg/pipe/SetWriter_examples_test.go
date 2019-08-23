@@ -12,10 +12,10 @@ import (
 	"sort"
 )
 
-// This examples shows how to use a map writer to write values to a map.
-func ExampleMapWriter() {
+// This examples shows how to use a SetWriter to write values to a set as keys to a map.
+func ExampleSetWriter() {
 
-	w := NewMapWriter()
+	w := NewSetWriter()
 
 	err := w.WriteObject("a")
 	if err != nil {
