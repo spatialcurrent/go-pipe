@@ -69,7 +69,9 @@ func (b *Builder) Transform(t func(inputObject interface{}) (interface{}, error)
 	}
 }
 
-// Transform sets the transform for the pipeline.
+// Error sets the error handler for the pipeline that catches errors from the transform function.
+// If the error handler returns nil, then the pipeline continues as normal.
+// If the error handler returns the original error (or a new one), then the pipeline bubbles up the error and exits.
 func (b *Builder) Error(e func(err error) error) *Builder {
 	return &Builder{
 		input:       b.input,

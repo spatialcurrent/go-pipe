@@ -43,11 +43,12 @@ func (mw *SetWriter) WriteObject(object interface{}) error {
 	return nil
 }
 
+// Flush has no effect for SetWriter as all objects are immediately written to the underlying set.
 func (mw *SetWriter) Flush() error {
 	return nil
 }
 
-// Resets the writer and clears all existing values.
+// Reset creates a new underlying set from the type of the original set.
 func (mw *SetWriter) Reset() {
 	mw.values = reflect.MakeSlice(reflect.TypeOf(mw.values), 0, 0)
 }
