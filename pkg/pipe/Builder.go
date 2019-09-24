@@ -16,6 +16,7 @@ type Builder struct {
 	filter      func(object interface{}) (bool, error)
 	inputLimit  int
 	outputLimit int
+	closeOutput bool
 }
 
 // NewBuilder returns a new builder.
@@ -27,6 +28,7 @@ func NewBuilder() *Builder {
 		filter:      nil,
 		inputLimit:  -1,
 		outputLimit: -1,
+		closeOutput: false,
 	}
 }
 
@@ -40,6 +42,7 @@ func (b *Builder) Input(in Iterator) *Builder {
 		filter:      b.filter,
 		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
+		closeOutput: b.closeOutput,
 	}
 }
 
@@ -53,7 +56,14 @@ func (b *Builder) Output(w Writer) *Builder {
 		filter:      b.filter,
 		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
+		closeOutput: b.closeOutput,
 	}
+}
+
+// Output sets the output for the pipeline to a function.
+// Wraps the provided function with pipe.FunctionWriter.
+func (b *Builder) OutputF(fn func(object interface{}) error) *Builder {
+	return b.Output(NewFunctionWriter(fn))
 }
 
 // Transform sets the transform for the pipeline.
@@ -66,6 +76,7 @@ func (b *Builder) Transform(t func(inputObject interface{}) (interface{}, error)
 		filter:      b.filter,
 		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
+		closeOutput: b.closeOutput,
 	}
 }
 
@@ -81,6 +92,7 @@ func (b *Builder) Error(e func(err error) error) *Builder {
 		filter:      b.filter,
 		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
+		closeOutput: b.closeOutput,
 	}
 }
 
@@ -94,6 +106,7 @@ func (b *Builder) Filter(f func(object interface{}) (bool, error)) *Builder {
 		filter:      f,
 		inputLimit:  b.inputLimit,
 		outputLimit: b.outputLimit,
+		closeOutput: b.closeOutput,
 	}
 }
 
@@ -107,6 +120,7 @@ func (b *Builder) InputLimit(inputLimit int) *Builder {
 		filter:      b.filter,
 		inputLimit:  inputLimit,
 		outputLimit: b.outputLimit,
+		closeOutput: b.closeOutput,
 	}
 }
 
@@ -120,13 +134,28 @@ func (b *Builder) OutputLimit(outputLimit int) *Builder {
 		filter:      b.filter,
 		inputLimit:  b.inputLimit,
 		outputLimit: outputLimit,
+		closeOutput: b.closeOutput,
+	}
+}
+
+// CloseOutput sets the closeOutput for the pipeline.
+func (b *Builder) CloseOutput(closeOutput bool) *Builder {
+	return &Builder{
+		input:       b.input,
+		output:      b.output,
+		transform:   b.transform,
+		error:       b.error,
+		filter:      b.filter,
+		inputLimit:  b.inputLimit,
+		outputLimit: b.outputLimit,
+		closeOutput: closeOutput,
 	}
 }
 
 // Run runs the pipeline.
 func (b *Builder) Run() error {
 	if b.input != nil && b.output != nil {
-		return IteratorToWriter(b.input, b.output, b.transform, b.error, b.filter, b.inputLimit, b.outputLimit)
+		return IteratorToWriter(b.input, b.output, b.transform, b.error, b.filter, b.inputLimit, b.outputLimit, b.closeOutput)
 	}
 	return nil
 }

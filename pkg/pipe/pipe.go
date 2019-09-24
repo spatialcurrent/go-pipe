@@ -15,11 +15,11 @@ import (
 )
 
 var (
-	FilterNotNil = func(inputObject interface{}) (bool, error) {
-		return inputObject != nil, nil
+	FilterNotNil = func(object interface{}) (bool, error) {
+		return object != nil, nil
 	}
-	FilterString = func(inputObject interface{}) (bool, error) {
-		_, ok := inputObject.(string)
+	FilterString = func(object interface{}) (bool, error) {
+		_, ok := object.(string)
 		return ok, nil
 	}
 	WriterStdout = NewFunctionWriter(func(object interface{}) error {

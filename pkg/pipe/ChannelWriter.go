@@ -7,22 +7,33 @@
 
 package pipe
 
+import (
+	"reflect"
+)
+
 // ChannelWriter passes each object to the callback function
 type ChannelWriter struct {
-	channel chan interface{}
+	channel reflect.Value
 }
 
-func NewChannelWriter(channel chan interface{}) *ChannelWriter {
-	return &ChannelWriter{
-		channel: channel,
+func NewChannelWriter(channel interface{}) (*ChannelWriter, error) {
+	v := reflect.ValueOf(channel)
+	if k := v.Type().Kind(); k != reflect.Chan {
+		return nil, &ErrInvalidKind{Value: v.Type(), Expected: []reflect.Kind{reflect.Chan}}
 	}
+	return &ChannelWriter{channel: v}, nil
 }
 
 func (cw *ChannelWriter) WriteObject(object interface{}) error {
-	cw.channel <- object
+	cw.channel.Send(reflect.ValueOf(object))
 	return nil
 }
 
 func (cw *ChannelWriter) Flush() error {
+	return nil
+}
+
+func (cw *ChannelWriter) Close() error {
+	cw.channel.Close()
 	return nil
 }
