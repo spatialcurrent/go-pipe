@@ -46,6 +46,11 @@ func (b *Builder) Input(in Iterator) *Builder {
 	}
 }
 
+// InputF sets the input for the pipeline to a function by wrapping the provided function with pipe.FunctionIterator.
+func (b *Builder) InputF(fn func() (interface{}, error)) *Builder {
+	return b.Input(NewFunctionIterator(fn))
+}
+
 // Output sets the output for the pipeline.
 func (b *Builder) Output(w Writer) *Builder {
 	return &Builder{
@@ -60,8 +65,7 @@ func (b *Builder) Output(w Writer) *Builder {
 	}
 }
 
-// Output sets the output for the pipeline to a function.
-// Wraps the provided function with pipe.FunctionWriter.
+// OutputF sets the output for the pipeline to a function by wrapping the provided function with pipe.FunctionWriter.
 func (b *Builder) OutputF(fn func(object interface{}) error) *Builder {
 	return b.Output(NewFunctionWriter(fn))
 }
