@@ -17,9 +17,12 @@ func TestChannelWriter(t *testing.T) {
 
 	c := make(chan interface{}, 1000)
 
-	w := NewChannelWriter(c)
+	w, err := NewChannelWriter(c)
+	if err != nil {
+		panic(err)
+	}
 
-	err := w.WriteObject("a")
+	err = w.WriteObject("a")
 	assert.Nil(t, err)
 
 	err = w.WriteObject("b")

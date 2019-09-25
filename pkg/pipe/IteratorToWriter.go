@@ -21,7 +21,7 @@ import (
 // If the filter returns true and no error, then the object is passed to the writer.
 // If the inputLimit >= 0, then reads the given number of objects from the input.
 // If the outputLimit >= 0, then writes the given number of objecst to the writer.
-func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interface{}) (interface{}, error), errorHandler func(err error) error, filter func(inputObject interface{}) (bool, error), inputLimit int, outputLimit int) error {
+func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interface{}) (interface{}, error), errorHandler func(err error) error, filter func(inputObject interface{}) (bool, error), inputLimit int, outputLimit int, closeOutput bool) error {
 	if inputLimit == 0 {
 		return nil
 	}
@@ -91,6 +91,15 @@ func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interfac
 	err := w.Flush()
 	if err != nil {
 		return errors.Wrap(err, "error flushing output")
+	}
+
+	if closeOutput {
+		if c, ok := w.(interface{ Close() error }); ok {
+			err = c.Close()
+			if err != nil {
+				return errors.Wrap(err, "error closing output")
+			}
+		}
 	}
 
 	return nil
