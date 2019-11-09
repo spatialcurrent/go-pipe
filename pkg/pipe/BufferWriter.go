@@ -14,7 +14,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// BufferWriter wraps a buffer around an underlying writer
+// BufferWriter wraps a buffer around an underlying writer.
+// Once the buffer reaches capacity, it writes its values to the underlying writer.
+// The Flush method will propagate to the underlying writer.
 type BufferWriter struct {
 	writer   Writer
 	values   reflect.Value
@@ -22,7 +24,7 @@ type BufferWriter struct {
 	capacity int
 }
 
-// Whenever the buffer reaches capacity, it will write its contents to the underlying writer.
+// NewBufferWriter returns a new BufferWriter with the given capacity.
 func NewBufferWriter(writer Writer, capacity int) *BufferWriter {
 	return &BufferWriter{
 		writer:   writer,
