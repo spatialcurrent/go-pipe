@@ -10,6 +10,8 @@ package pipe
 import (
 	"reflect"
 	"sync"
+	
+	"github.com/pkg/errors"
 )
 
 // SetWriter contains the WriteObject and Flush functions for writing objects as keys to a set.
@@ -32,29 +34,48 @@ func NewSetWriterWithValues(initialValues interface{}) *SetWriter {
 	}
 }
 
-func (mw *SetWriter) WriteObject(object interface{}) error {
-	mw.mutex.Lock()
+func (sw *SetWriter) WriteObject(object interface{}) error {
+	sw.mutex.Lock()
 	if object == nil {
-		mw.values.SetMapIndex(reflect.Zero(mw.values.Type().Key()), reflect.Zero(mw.values.Type().Elem()))
+		sw.values.SetMapIndex(reflect.Zero(sw.values.Type().Key()), reflect.Zero(sw.values.Type().Elem()))
 	} else {
-		mw.values.SetMapIndex(reflect.ValueOf(object), reflect.Zero(mw.values.Type().Elem()))
+		sw.values.SetMapIndex(reflect.ValueOf(object), reflect.Zero(sw.values.Type().Elem()))
 	}
-	mw.mutex.Unlock()
+	sw.mutex.Unlock()
+	return nil
+}
+
+func (sw *SetWriter) WriteObjects(objects interface{}) error {
+	v := reflect.ValueOf(objects)
+	if !v.IsValid() {
+		return errors.Errorf("objects %#v is not valid", objects)
+	}
+	if v.Kind() != reflect.Array && v.Kind() != reflect.Slice {
+		return errors.Errorf("objects is type %T, expecting kind array or slice", objects)
+	}
+	if v.IsNil() {
+		return errors.Errorf("objects %#v is nil", objects)
+	}
+	sw.mutex.Lock()
+	for i := 0; i < v.Len(); i++ {
+		sw.values.SetMapIndex(v.Index(i), reflect.Zero(sw.values.Type().Elem()))
+	}
+	sw.mutex.Unlock()
 	return nil
 }
 
 // Flush has no effect for SetWriter as all objects are immediately written to the underlying set.
-func (mw *SetWriter) Flush() error {
+func (sw *SetWriter) Flush() error {
 	return nil
 }
 
 // Reset creates a new underlying set from the type of the original set.
-func (mw *SetWriter) Reset() {
-	mw.values = reflect.MakeSlice(reflect.TypeOf(mw.values), 0, 0)
+func (sw *SetWriter) Reset() {
+	sw.values = reflect.MakeSlice(reflect.TypeOf(sw.values), 0, 0)
 }
 
-func (mw *SetWriter) SliceInterface() []interface{} {
-	keys := mw.values.MapKeys()
+func (sw *SetWriter) SliceInterface() []interface{} {
+	keys := sw.values.MapKeys()
 	values := make([]interface{}, 0, len(keys))
 	for _, key := range keys {
 		values = append(values, key.Interface())
@@ -62,22 +83,22 @@ func (mw *SetWriter) SliceInterface() []interface{} {
 	return values
 }
 
-func (mw *SetWriter) SliceType() interface{} {
-	keys := mw.values.MapKeys()
-	values := reflect.MakeSlice(reflect.SliceOf(mw.values.Type().Key()), 0, len(keys))
+func (sw *SetWriter) SliceType() interface{} {
+	keys := sw.values.MapKeys()
+	values := reflect.MakeSlice(reflect.SliceOf(sw.values.Type().Key()), 0, len(keys))
 	for _, key := range keys {
 		values = reflect.Append(values, key)
 	}
 	return values.Interface()
 }
 
-func (mw *SetWriter) Values() interface{} {
-	return mw.values.Interface()
+func (sw *SetWriter) Values() interface{} {
+	return sw.values.Interface()
 }
 
-func (mw *SetWriter) Iterator() *SetIterator {
+func (sw *SetWriter) Iterator() *SetIterator {
 	return &SetIterator{
-		it:   mw.values.MapRange(),
+		it:   sw.values.MapRange(),
 		done: false,
 	}
 }
