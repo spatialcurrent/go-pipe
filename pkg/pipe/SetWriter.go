@@ -10,7 +10,7 @@ package pipe
 import (
 	"reflect"
 	"sync"
-	
+
 	"github.com/pkg/errors"
 )
 
