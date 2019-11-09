@@ -38,3 +38,17 @@ func TestSliceWriter(t *testing.T) {
 	values := w.Values()
 	assert.Equal(t, []interface{}{"a", "b", "3", 1, 2, 3}, values)
 }
+
+func TestSliceWriterWriteObjects(t *testing.T) {
+
+	w := NewSliceWriter()
+
+	err := w.WriteObjects([]interface{}{"a", "b", "3"})
+	assert.Nil(t, err)
+
+	err = w.WriteObjects([]interface{}{1, 2, 3})
+	assert.Nil(t, err)
+
+	values := w.Values()
+	assert.Equal(t, []interface{}{"a", "b", "3", 1, 2, 3}, values)
+}

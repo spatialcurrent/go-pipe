@@ -10,6 +10,8 @@ package pipe
 import (
 	"reflect"
 	"sync"
+
+	"github.com/pkg/errors"
 )
 
 // SliceWriter contains the WriteObject and Flush functions for writing objects to an underlying slice.
@@ -50,6 +52,25 @@ func (sw *SliceWriter) WriteObject(object interface{}) error {
 	return nil
 }
 
+func (sw *SliceWriter) WriteObjects(objects interface{}) error {
+	v := reflect.ValueOf(objects)
+	if !v.IsValid() {
+		return errors.Errorf("objects %#v is not valid", objects)
+	}
+	if v.Kind() != reflect.Array && v.Kind() != reflect.Slice {
+		return errors.Errorf("objects is type %T, expecting kind array or slice", objects)
+	}
+	if v.IsNil() {
+		return errors.Errorf("objects %#v is nil", objects)
+	}
+	sw.mutex.Lock()
+	for i := 0; i < v.Len(); i++ {
+		sw.values = reflect.Append(sw.values, v.Index(i))
+	}
+	sw.mutex.Unlock()
+	return nil
+}
+
 func (sw *SliceWriter) Flush() error {
 	return nil
 }
@@ -60,6 +81,9 @@ func (sw *SliceWriter) Reset() {
 }
 
 func (sw *SliceWriter) Values() interface{} {
+	if !sw.values.IsValid() {
+		return nil
+	}
 	return sw.values.Interface()
 }
 

@@ -32,7 +32,7 @@ func TestSetWriter(t *testing.T) {
 	err = w.WriteObject("c")
 	assert.Nil(t, err)
 
-	err = w.WriteObject("a")
+	err = w.WriteObjects([]interface{}{"a", "a"})
 	assert.Nil(t, err)
 
 	values := w.Values() // get values written as slice of type []interface{}
