@@ -18,11 +18,22 @@ type Iterator interface {
 
 **Writer**
 
-Writer can write objects to any backend defined by the concrete implementation.
+Writer is a writer that accepts input as individual objects.
 
 ```go
 type Writer interface {
 	WriteObject(object interface{}) error
+	Flush() error
+}
+```
+
+**BatchWriter**
+
+BatchWriter is a writer that accepts input in batches as an array or slice of objects.
+
+```go
+type Writer interface {
+	WriteObjects(objects interface{}) error
 	Flush() error
 }
 ```
