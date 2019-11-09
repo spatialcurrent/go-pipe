@@ -46,13 +46,13 @@ func (bw *BufferWriter) WriteObject(object interface{}) error {
 		if w, ok := bw.writer.(BatchWriter); ok {
 			err := w.WriteObjects(bw.values.Interface())
 			if err != nil {
-				return errors.Wrapf(err, "error writing objects $%v to underlying writer", bw.values.Interface())
+				return errors.Wrapf(err, "error writing objects %#v to underlying writer", bw.values.Interface())
 			}
 		} else {
 			for i := 0; i < bw.values.Len(); i++ {
 				err := bw.writer.WriteObject(bw.values.Index(i).Interface())
 				if err != nil {
-					return errors.Wrapf(err, "error writing object %d of $%v to underlying writer", i, bw.values.Interface())
+					return errors.Wrapf(err, "error writing object %d of %#v to underlying writer", i, bw.values.Interface())
 				}
 			}
 		}
@@ -81,13 +81,13 @@ func (bw *BufferWriter) WriteObjects(objects interface{}) error {
 			if w, ok := bw.writer.(BatchWriter); ok {
 				err := w.WriteObjects(bw.values.Interface())
 				if err != nil {
-					return errors.Wrapf(err, "error writing objects $%v to underlying writer", bw.values.Interface())
+					return errors.Wrapf(err, "error writing objects %#v to underlying writer", bw.values.Interface())
 				}
 			} else {
 				for j := 0; j < bw.values.Len(); j++ {
 					err := bw.writer.WriteObject(bw.values.Index(j).Interface())
 					if err != nil {
-						return errors.Wrapf(err, "error writing object %d of $%v to underlying writer", i, bw.values.Interface())
+						return errors.Wrapf(err, "error writing object %d of %#v to underlying writer", i, bw.values.Interface())
 					}
 				}
 			}
@@ -102,7 +102,7 @@ func (bw *BufferWriter) Flush() error {
 	for i := 0; i < bw.values.Len(); i++ {
 		err := bw.writer.WriteObject(bw.values.Index(i).Interface())
 		if err != nil {
-			return errors.Wrapf(err, "error writing object %d of $%v to underlying writer", i, bw.values.Interface())
+			return errors.Wrapf(err, "error writing object %d of %#v to underlying writer", i, bw.values.Interface())
 		}
 	}
 	// reset the buffer
