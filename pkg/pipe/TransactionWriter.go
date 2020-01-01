@@ -17,18 +17,20 @@ import (
 // TransactionWriter opens up a transaction to the underlying writer
 // and closes the underlying writer after the objects are written.
 type TransactionWriter struct {
-	open  func() (Writer, error)
-	mutex *sync.RWMutex
+	opener func() (Writer, error)
+	closer func(w Writer) error
+	mutex  *sync.RWMutex
 }
 
-// NewTransactionWriter returns a new TransactionWriter with the open function.
-func NewTransactionWriter(open func() (Writer, error)) (*TransactionWriter, error) {
-	if open == nil {
+// NewTransactionWriter returns a new TransactionWriter with the opener function and optional closer function.
+func NewTransactionWriter(opener func() (Writer, error), closer func(w Writer) error) (*TransactionWriter, error) {
+	if opener == nil {
 		return nil, errors.New("cannot create TransactionWriter: open is nil")
 	}
 	tw := &TransactionWriter{
-		open:  open,
-		mutex: &sync.RWMutex{},
+		opener: opener,
+		closer: closer,
+		mutex:  &sync.RWMutex{},
 	}
 	return tw, nil
 }
@@ -37,7 +39,7 @@ func (tw *TransactionWriter) WriteObject(object interface{}) error {
 	tw.mutex.Lock()
 	defer tw.mutex.Unlock()
 
-	w, err := tw.open()
+	w, err := tw.opener()
 	if err != nil {
 		return fmt.Errorf("error opening writer: %w", err)
 	}
@@ -52,10 +54,17 @@ func (tw *TransactionWriter) WriteObject(object interface{}) error {
 		return fmt.Errorf("error flushing writer: %w", err)
 	}
 
-	if closer, ok := w.(interface{ Close() error }); ok {
-		err = closer.Close()
+	if tw.closer != nil {
+		err = tw.closer(w)
 		if err != nil {
 			return fmt.Errorf("error closing writer: %w", err)
+		}
+	} else {
+		if closer, ok := w.(interface{ Close() error }); ok {
+			err = closer.Close()
+			if err != nil {
+				return fmt.Errorf("error closing writer: %w", err)
+			}
 		}
 	}
 
@@ -78,7 +87,7 @@ func (tw *TransactionWriter) WriteObjects(objects interface{}) error {
 	tw.mutex.Lock()
 	defer tw.mutex.Unlock()
 
-	w, err := tw.open()
+	w, err := tw.opener()
 	if err != nil {
 		return fmt.Errorf("error opening writer: %w", err)
 	}
@@ -102,10 +111,17 @@ func (tw *TransactionWriter) WriteObjects(objects interface{}) error {
 		return fmt.Errorf("error flushing writer: %w", err)
 	}
 
-	if closer, ok := w.(interface{ Close() error }); ok {
-		err := closer.Close()
+	if tw.closer != nil {
+		err = tw.closer(w)
 		if err != nil {
 			return fmt.Errorf("error closing writer: %w", err)
+		}
+	} else {
+		if closer, ok := w.(interface{ Close() error }); ok {
+			err = closer.Close()
+			if err != nil {
+				return fmt.Errorf("error closing writer: %w", err)
+			}
 		}
 	}
 
