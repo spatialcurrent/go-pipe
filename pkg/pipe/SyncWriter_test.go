@@ -9,11 +9,9 @@ package pipe
 
 import (
 	"sync"
-	//"time"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	//"github.com/stretchr/testify/require"
 )
 
 func TestSyncWriter(t *testing.T) {
