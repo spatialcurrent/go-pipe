@@ -84,13 +84,13 @@ func (tw *TransactionWriter) WriteObjects(objects interface{}) error {
 	}
 
 	if bw, ok := w.(BatchWriter); ok {
-		err := bw.WriteObjects(objects)
+		err = bw.WriteObjects(objects)
 		if err != nil {
 			return fmt.Errorf("error writing objects: %w", err)
 		}
 	} else {
 		for i := 0; i < values.Len(); i++ {
-			err := w.WriteObject(values.Index(i).Interface())
+			err = w.WriteObject(values.Index(i).Interface())
 			if err != nil {
 				return fmt.Errorf("error writing object %d: %w", i, err)
 			}
