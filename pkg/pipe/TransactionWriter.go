@@ -19,7 +19,7 @@ import (
 type TransactionWriter struct {
 	opener func() (Writer, error)
 	closer func(w Writer) error
-	mutex  *sync.RWMutex
+	mutex  *sync.Mutex
 }
 
 // NewTransactionWriter returns a new TransactionWriter with the opener function and optional closer function.
@@ -30,7 +30,7 @@ func NewTransactionWriter(opener func() (Writer, error), closer func(w Writer) e
 	tw := &TransactionWriter{
 		opener: opener,
 		closer: closer,
-		mutex:  &sync.RWMutex{},
+		mutex:  &sync.Mutex{},
 	}
 	return tw, nil
 }
