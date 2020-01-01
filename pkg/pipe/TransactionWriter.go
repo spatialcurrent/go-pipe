@@ -21,7 +21,7 @@ type TransactionWriter struct {
 	mutex *sync.RWMutex
 }
 
-// NewBufferWriter returns a new BufferWriter with the given capacity.
+// NewTransactionWriter returns a new TransactionWriter with the open function.
 func NewTransactionWriter(open func() (Writer, error)) (*TransactionWriter, error) {
 	if open == nil {
 		return nil, errors.New("cannot create TransactionWriter: open is nil")
