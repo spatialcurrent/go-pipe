@@ -24,11 +24,38 @@ func TestTransactionWriter(t *testing.T) {
 			return nil
 		})
 		return fw, nil
-	})
+	}, nil)
 
 	require.NoError(t, err)
 
 	err = tw.WriteObject("a")
 	assert.Nil(t, err)
 	assert.Equal(t, []interface{}{"a"}, values)
+}
+
+func TestTransactionWriterCloser(t *testing.T) {
+
+	closed := 0
+	values := make([]interface{}, 0)
+
+	tw, err := NewTransactionWriter(
+		func() (Writer, error) {
+			fw := NewFunctionWriter(func(object interface{}) error {
+				values = append(values, object)
+				return nil
+			})
+			return fw, nil
+		},
+		func(w Writer) error {
+			closed += 1
+			return nil
+		},
+	)
+
+	require.NoError(t, err)
+
+	err = tw.WriteObject("a")
+	assert.Nil(t, err)
+	assert.Equal(t, []interface{}{"a"}, values)
+	assert.Equal(t, 1, closed)
 }
