@@ -99,15 +99,33 @@ func (bw *BufferWriter) WriteObjects(objects interface{}) error {
 }
 
 func (bw *BufferWriter) Flush() error {
-	for i := 0; i < bw.values.Len(); i++ {
-		err := bw.writer.WriteObject(bw.values.Index(i).Interface())
+	bw.mutex.Lock()
+	defer bw.mutex.Unlock()
+	if w, ok := bw.writer.(BatchWriter); ok {
+		err := w.WriteObjects(bw.values.Interface())
 		if err != nil {
-			return errors.Wrapf(err, "error writing object %d of %#v to underlying writer", i, bw.values.Interface())
+			return errors.Wrapf(err, "error writing objects %#v to underlying writer", bw.values.Interface())
+		}
+	} else {
+		for i := 0; i < bw.values.Len(); i++ {
+			err := bw.writer.WriteObject(bw.values.Index(i).Interface())
+			if err != nil {
+				return errors.Wrapf(err, "error writing object %d of %#v to underlying writer", i, bw.values.Interface())
+			}
 		}
 	}
 	// reset the buffer
 	bw.values = reflect.MakeSlice(bw.values.Type(), 0, bw.capacity)
 	return bw.writer.Flush()
+}
+
+func (bw *BufferWriter) Close() error {
+	bw.mutex.Lock()
+	defer bw.mutex.Unlock()
+	if closer, ok := bw.writer.(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // Reset creates a new underlying slice from the type of the original slice.
