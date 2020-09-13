@@ -79,3 +79,14 @@ func (mw *MultiWriter) Flush() error {
 	}
 	return nil
 }
+
+func (mw *MultiWriter) Close() error {
+	for i, w := range mw.writers {
+		if closer, ok := w.(interface{ Close() error }); ok {
+			if err := closer.Close(); err != nil {
+				return errors.Wrapf(err, "error closing writer %d", i)
+			}
+		}
+	}
+	return nil
+}
