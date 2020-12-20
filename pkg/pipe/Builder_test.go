@@ -1,6 +1,6 @@
 // =================================================================
 //
-// Copyright (C) 2019 Spatial Current, Inc. - All Rights Reserved
+// Copyright (C) 2020 Spatial Current, Inc. - All Rights Reserved
 // Released as open source under the MIT License.  See LICENSE file.
 //
 // =================================================================
@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -108,7 +107,7 @@ func TestBuilderTransformError(t *testing.T) {
 			return nil, fmt.Errorf("found value %v of type %T, expected type string", inputObject, inputObject)
 		}).
 		Error(func(err error) error {
-			return errors.Wrap(err, "error transforming input")
+			return fmt.Errorf("error transforming input: %w", err)
 		}).
 		Output(w)
 	assert.NotNil(t, b)

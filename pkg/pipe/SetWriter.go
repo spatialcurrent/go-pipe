@@ -1,6 +1,6 @@
 // =================================================================
 //
-// Copyright (C) 2019 Spatial Current, Inc. - All Rights Reserved
+// Copyright (C) 2020 Spatial Current, Inc. - All Rights Reserved
 // Released as open source under the MIT License.  See LICENSE file.
 //
 // =================================================================
@@ -8,10 +8,9 @@
 package pipe
 
 import (
+	"fmt"
 	"reflect"
 	"sync"
-
-	"github.com/pkg/errors"
 )
 
 // SetWriter contains the WriteObject and Flush functions for writing objects as keys to a set.
@@ -48,13 +47,13 @@ func (sw *SetWriter) WriteObject(object interface{}) error {
 func (sw *SetWriter) WriteObjects(objects interface{}) error {
 	v := reflect.ValueOf(objects)
 	if !v.IsValid() {
-		return errors.Errorf("objects %#v is not valid", objects)
+		return fmt.Errorf("objects %#v is not valid", objects)
 	}
 	if v.Kind() != reflect.Array && v.Kind() != reflect.Slice {
-		return errors.Errorf("objects is type %T, expecting kind array or slice", objects)
+		return fmt.Errorf("objects is type %T, expecting kind array or slice", objects)
 	}
 	if v.IsNil() {
-		return errors.Errorf("objects %#v is nil", objects)
+		return fmt.Errorf("objects %#v is nil", objects)
 	}
 	sw.mutex.Lock()
 	for i := 0; i < v.Len(); i++ {

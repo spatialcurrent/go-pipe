@@ -1,6 +1,6 @@
 // =================================================================
 //
-// Copyright (C) 2019 Spatial Current, Inc. - All Rights Reserved
+// Copyright (C) 2020 Spatial Current, Inc. - All Rights Reserved
 // Released as open source under the MIT License.  See LICENSE file.
 //
 // =================================================================
@@ -8,9 +8,8 @@
 package pipe
 
 import (
+	"fmt"
 	"io"
-
-	"github.com/pkg/errors"
 )
 
 // IteratorToWriter reads objects from the provided iterator and writes them to the provided writer.
@@ -37,7 +36,7 @@ func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interfac
 			if nextError == io.EOF {
 				break
 			}
-			return errors.Wrap(nextError, "error reading next object")
+			return fmt.Errorf("error reading next object: %w", nextError)
 		}
 		if transform != nil {
 			outputObject, transformError := transform(inputObject)
@@ -52,7 +51,7 @@ func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interfac
 			if filter != nil {
 				ok, filterError := filter(outputObject)
 				if filterError != nil {
-					return errors.Wrap(filterError, "error grepping object")
+					return fmt.Errorf("error grepping object: %w", filterError)
 				}
 				if !ok {
 					continue
@@ -61,13 +60,13 @@ func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interfac
 			outputCount++
 			writeError := w.WriteObject(outputObject)
 			if writeError != nil {
-				return errors.Wrap(writeError, "error writing object to output")
+				return fmt.Errorf("error writing object to output: %w", writeError)
 			}
 		} else {
 			if filter != nil {
 				ok, filterError := filter(inputObject)
 				if filterError != nil {
-					return errors.Wrap(filterError, "error grepping object")
+					return fmt.Errorf("error grepping object: %w", filterError)
 				}
 				if !ok {
 					continue
@@ -76,7 +75,7 @@ func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interfac
 			outputCount++
 			writeError := w.WriteObject(inputObject)
 			if writeError != nil {
-				return errors.Wrap(writeError, "error writing object to output")
+				return fmt.Errorf("error writing object to output: %w", writeError)
 			}
 		}
 		if inputLimit > 0 && inputCount == inputLimit {
@@ -90,14 +89,14 @@ func IteratorToWriter(it Iterator, w Writer, transform func(inputObject interfac
 	// Flush propogates and calls the underlying writers flush command, if implemented in the concerete struct.
 	err := w.Flush()
 	if err != nil {
-		return errors.Wrap(err, "error flushing output")
+		return fmt.Errorf("error flushing output: %w", err)
 	}
 
 	if closeOutput {
 		if c, ok := w.(interface{ Close() error }); ok {
 			err = c.Close()
 			if err != nil {
-				return errors.Wrap(err, "error closing output")
+				return fmt.Errorf("error closing output: %w", err)
 			}
 		}
 	}

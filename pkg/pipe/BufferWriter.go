@@ -1,6 +1,6 @@
 // =================================================================
 //
-// Copyright (C) 2019 Spatial Current, Inc. - All Rights Reserved
+// Copyright (C) 2020 Spatial Current, Inc. - All Rights Reserved
 // Released as open source under the MIT License.  See LICENSE file.
 //
 // =================================================================
@@ -8,10 +8,9 @@
 package pipe
 
 import (
+	"fmt"
 	"reflect"
 	"sync"
-
-	"github.com/pkg/errors"
 )
 
 // BufferWriter wraps a buffer around an underlying writer.
@@ -46,13 +45,13 @@ func (bw *BufferWriter) WriteObject(object interface{}) error {
 		if w, ok := bw.writer.(BatchWriter); ok {
 			err := w.WriteObjects(bw.values.Interface())
 			if err != nil {
-				return errors.Wrapf(err, "error writing objects %#v to underlying writer", bw.values.Interface())
+				return fmt.Errorf("error writing objects %#v to underlying writer: %w", bw.values.Interface(), err)
 			}
 		} else {
 			for i := 0; i < bw.values.Len(); i++ {
 				err := bw.writer.WriteObject(bw.values.Index(i).Interface())
 				if err != nil {
-					return errors.Wrapf(err, "error writing object %d of %#v to underlying writer", i, bw.values.Interface())
+					return fmt.Errorf("error writing object %d of %#v to underlying writer: %w", i, bw.values.Interface(), err)
 				}
 			}
 		}
@@ -65,13 +64,13 @@ func (bw *BufferWriter) WriteObject(object interface{}) error {
 func (bw *BufferWriter) WriteObjects(objects interface{}) error {
 	v := reflect.ValueOf(objects)
 	if !v.IsValid() {
-		return errors.Errorf("objects %#v is not valid", objects)
+		return fmt.Errorf("objects %#v is not valid", objects)
 	}
 	if v.Kind() != reflect.Array && v.Kind() != reflect.Slice {
-		return errors.Errorf("objects is type %T, expecting kind array or slice", objects)
+		return fmt.Errorf("objects is type %T, expecting kind array or slice", objects)
 	}
 	if v.IsNil() {
-		return errors.Errorf("objects %#v is nil", objects)
+		return fmt.Errorf("objects %#v is nil", objects)
 	}
 	bw.mutex.Lock()
 	defer bw.mutex.Unlock()
@@ -81,13 +80,13 @@ func (bw *BufferWriter) WriteObjects(objects interface{}) error {
 			if w, ok := bw.writer.(BatchWriter); ok {
 				err := w.WriteObjects(bw.values.Interface())
 				if err != nil {
-					return errors.Wrapf(err, "error writing objects %#v to underlying writer", bw.values.Interface())
+					return fmt.Errorf("error writing objects %#v to underlying writer: %w", bw.values.Interface(), err)
 				}
 			} else {
 				for j := 0; j < bw.values.Len(); j++ {
 					err := bw.writer.WriteObject(bw.values.Index(j).Interface())
 					if err != nil {
-						return errors.Wrapf(err, "error writing object %d of %#v to underlying writer", i, bw.values.Interface())
+						return fmt.Errorf("error writing object %d of %#v to underlying writer: %w", i, bw.values.Interface(), err)
 					}
 				}
 			}
@@ -104,13 +103,13 @@ func (bw *BufferWriter) Flush() error {
 	if w, ok := bw.writer.(BatchWriter); ok {
 		err := w.WriteObjects(bw.values.Interface())
 		if err != nil {
-			return errors.Wrapf(err, "error writing objects %#v to underlying writer", bw.values.Interface())
+			return fmt.Errorf("error writing objects %#v to underlying writer: %w", bw.values.Interface(), err)
 		}
 	} else {
 		for i := 0; i < bw.values.Len(); i++ {
 			err := bw.writer.WriteObject(bw.values.Index(i).Interface())
 			if err != nil {
-				return errors.Wrapf(err, "error writing object %d of %#v to underlying writer", i, bw.values.Interface())
+				return fmt.Errorf("error writing object %d of %#v to underlying writer: %w", i, bw.values.Interface(), err)
 			}
 		}
 	}
