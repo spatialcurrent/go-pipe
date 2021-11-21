@@ -1,4 +1,7 @@
-[![CircleCI](https://circleci.com/gh/spatialcurrent/go-pipe/tree/master.svg?style=svg)](https://circleci.com/gh/spatialcurrent/go-pipe/tree/master) [![Go Report Card](https://goreportcard.com/badge/spatialcurrent/go-pipe)](https://goreportcard.com/report/spatialcurrent/go-pipe)  [![GoDoc](https://godoc.org/github.com/spatialcurrent/go-pipe?status.svg)](https://godoc.org/github.com/spatialcurrent/go-pipe) [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://github.com/spatialcurrent/go-pipe/blob/master/LICENSE)
+[![CircleCI](https://circleci.com/gh/spatialcurrent/go-pipe/tree/main.svg?style=svg)](https://circleci.com/gh/spatialcurrent/go-pipe/tree/main)
+[![Go Report Card](https://goreportcard.com/badge/spatialcurrent/go-pipe?style=flat-square)](https://goreportcard.com/report/github.com/spatialcurrent/go-pipe)
+[![PkgGoDev](https://pkg.go.dev/badge/mod/github.com/spatialcurrent/go-pipe)](https://pkg.go.dev/github.com/spatialcurrent/go-pipe)
+[![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://github.com/spatialcurrent/go-pipe/blob/master/LICENSE)
 
 # go-pipe
 
@@ -58,15 +61,15 @@ import (
 )
 ```
 
-See [pipe](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe) in GoDoc for information on how to use Go API.
+See [pipe](https://pkg.go.dev/github.com/spatialcurrent/go-pipe/pkg/pipe) in the docs for information on how to use Go API.
 
 # Examples
 
-See the many [examples](https://godoc.org/github.com/spatialcurrent/go-pipe/pkg/pipe/#pkg-examples) in GoDoc or the tests.
+See the many [examples](https://pkg.go.dev/github.com/spatialcurrent/go-pipe/pkg/pipe/#pkg-examples) in the docs or the tests.
 
 # Testing
 
-Run test using `make test` or (`bash scripts/test.sh`), which runs unit tests, `go vet`, `go vet with shadow`, [errcheck](https://github.com/kisielk/errcheck), [ineffassign](https://github.com/gordonklaus/ineffassign), [staticcheck](https://staticcheck.io/), and [misspell](https://github.com/client9/misspell).
+Run test using `make test` or (`bash scripts/test.sh`), which runs unit tests, `go vet`, `go vet with shadow`, [errcheck](https://github.com/kisielk/errcheck), [staticcheck](https://staticcheck.io/), and [misspell](https://github.com/client9/misspell).
 
 # Contributing
 
