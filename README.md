@@ -1,6 +1,6 @@
-[![CircleCI](https://circleci.com/gh/spatialcurrent/go-pipe/tree/master.svg?style=svg)](https://circleci.com/gh/spatialcurrent/go-pipe/tree/master)
+[![CircleCI](https://circleci.com/gh/spatialcurrent/go-pipe/tree/main.svg?style=svg)](https://circleci.com/gh/spatialcurrent/go-pipe/tree/main)
 [![Go Report Card](https://goreportcard.com/badge/spatialcurrent/go-pipe?style=flat-square)](https://goreportcard.com/report/github.com/spatialcurrent/go-pipe)
-[![PkgGoDev](https://pkg.go.dev/badge/mod/github.com/spatialcurrent/go-pipe)](https://pkg.go.dev/mod/github.com/spatialcurrent/go-pipe)
+[![PkgGoDev](https://pkg.go.dev/badge/mod/github.com/spatialcurrent/go-pipe)](https://pkg.go.dev/github.com/spatialcurrent/go-pipe)
 [![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://github.com/spatialcurrent/go-pipe/blob/master/LICENSE)
 
 # go-pipe
